@@ -214,7 +214,7 @@ nxHotZone = function(config) {
 		 */
 		down: function(event) {
 
-			// Set where the user clicked
+			// Set where the user has clicked
 			This.bounds = This.canvas.getBoundingClientRect();
 			This.origin = {
 				x: event.x - This.bounds.left,
@@ -848,10 +848,10 @@ nxHotZone = function(config) {
 
 // Auto-load as jQuery plugin
 if(typeof jQuery === 'function') {
-	$.fn.nxHotZone = function(params) {
+	jQuery.fn.nxHotZone = function(params) {
 		for(var i = 0; i < this.length; i++) {
 			var hotzone = new nxHotZone(params).useOnImage(this[i]);
-			$(this).data('nxHotZone', hotzone);
+			jQuery(this).data('nxHotZone', hotzone);
 		}
 	};
 }
