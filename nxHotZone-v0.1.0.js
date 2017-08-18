@@ -5,7 +5,7 @@
  *
  * @author	Ivan Sabo
  */
-nxZoner = function(config) {
+nxHotZone = function(config) {
 	var This = this;
 
 	/** A reference to the HTML canvas element which renders the selection. */
@@ -65,18 +65,18 @@ nxZoner = function(config) {
 	 *
 	 * @param	{DOMElement}	image - The image to use.
 	 *
-	 * @return	{nxZoner}	The instance of initialized Zoner.
+	 * @return	{nxHotZone}	The instance of initialized class.
 	 */
 	this.useOnImage = function(img) {
 
 		// Create wrapper
 		var wrapper = document.createElement('div');
 		wrapper.style.position = 'relative';
-		wrapper.className = 'nxZoner'
+		wrapper.className = 'nxHotZone'
 
 		// Put image in wrapper
 		img.style.visibility = 'hidden';
-		img.dataset.nxZoner = this;
+		img.dataset.nxHotZone = this;
 		img.parentNode.insertBefore(wrapper, img.nextSibling);
 		wrapper.appendChild(img);
 		bounds = wrapper.getBoundingClientRect();
@@ -137,13 +137,13 @@ nxZoner = function(config) {
 		this.canvas = canvas;
 		this.bounds = this.canvas.getBoundingClientRect();
 		this.context = this.canvas.getContext("2d");
-		this.canvas.dataset.nxZoner = this;
+		this.canvas.dataset.nxHotZone = this;
 
 		return this.canvas;
 	};
 
 	/**
-	 * Initialize the zoner.
+	 * Initialize.
 	 */
 	this.init = function() {
 
@@ -167,7 +167,7 @@ nxZoner = function(config) {
 	/**
 	 * Get the currently selected rectangle, or null if nothing is selected.
 	 *
-	 * @returns	{nxZoner#Rect}	The selected rectangle;
+	 * @returns	{nxHotZone#Rect}	The selected rectangle;
 	 */
 	this.getSelection = function() {
 		return this.selection;
@@ -325,7 +325,7 @@ nxZoner = function(config) {
 	};
 
 	/**
-	 * Check if the Zoner is actively modifying the selection at this time.
+	 * Check if the user is actively modifying the selection at this time.
 	 */
 	this.isActive = function() {
 		return this.origin != null;
@@ -346,9 +346,9 @@ nxZoner = function(config) {
 		 * @param	{int}			y	The starting y coordinate of the move, in pixels.
 		 * @param	{int}			dx	The amount of total movement on the x coordinate, in pixels.
 		 * @param	{int}			dy	The amount of total movement on the y coordinate, in pixels.
-		 * @param	{nxZoner#Rect}	start	The original rectangle.
+		 * @param	{nxHotZone#Rect}	start	The original rectangle.
 		 *
-		 * @returns	{nxZoner#Rect}	The resulting rectangle of the modification.
+		 * @returns	{nxHotZone#Rect}	The resulting rectangle of the modification.
 		 */
 		move: function(x, y, dx, dy, start) {
 			return new this.Rect(start.left + dx, start.top + dy, start.width, start.height);
@@ -361,9 +361,9 @@ nxZoner = function(config) {
 		 * @param	{int}			y	The starting y coordinate of the move, in pixels.
 		 * @param	{int}			dx	The amount of total movement on the x coordinate, in pixels.
 		 * @param	{int}			dy	The amount of total movement on the y coordinate, in pixels.
-		 * @param	{nxZoner#Rect}	start	The original rectangle.
+		 * @param	{nxHotZone#Rect}	start	The original rectangle.
 		 *
-		 * @returns	{nxZoner#Rect}	The resulting rectangle of the modification.
+		 * @returns	{nxHotZone#Rect}	The resulting rectangle of the modification.
 		 */
 		select: function(x, y, dx, dy, start) {
 			return new this.Rect(x, y, dx, dy);
@@ -376,9 +376,9 @@ nxZoner = function(config) {
 		 * @param	{int}			y	The starting y coordinate of the move, in pixels.
 		 * @param	{int}			dx	The amount of total movement on the x coordinate, in pixels.
 		 * @param	{int}			dy	The amount of total movement on the y coordinate, in pixels.
-		 * @param	{nxZoner#Rect}	start	The original rectangle.
+		 * @param	{nxHotZone#Rect}	start	The original rectangle.
 		 *
-		 * @returns	{nxZoner#Rect}	The resulting rectangle of the modification.
+		 * @returns	{nxHotZone#Rect}	The resulting rectangle of the modification.
 		 */
 		resizeN:  function(x, y, dx, dy, start) { return this.handlers.resize.call(this, 0 , dy,   0, -dy, start); },
 
@@ -389,9 +389,9 @@ nxZoner = function(config) {
 		 * @param	{int}			y	The starting y coordinate of the move, in pixels.
 		 * @param	{int}			dx	The amount of total movement on the x coordinate, in pixels.
 		 * @param	{int}			dy	The amount of total movement on the y coordinate, in pixels.
-		 * @param	{nxZoner#Rect}	start	The original rectangle.
+		 * @param	{nxHotZone#Rect}	start	The original rectangle.
 		 *
-		 * @returns	{nxZoner#Rect}	The resulting rectangle of the modification.
+		 * @returns	{nxHotZone#Rect}	The resulting rectangle of the modification.
 		 */
 		resizeNW: function(x, y, dx, dy, start) { return this.handlers.resize.call(this, dx, dy, -dx, -dy, start); },
 
@@ -402,9 +402,9 @@ nxZoner = function(config) {
 		 * @param	{int}			y	The starting y coordinate of the move, in pixels.
 		 * @param	{int}			dx	The amount of total movement on the x coordinate, in pixels.
 		 * @param	{int}			dy	The amount of total movement on the y coordinate, in pixels.
-		 * @param	{nxZoner#Rect}	start	The original rectangle.
+		 * @param	{nxHotZone#Rect}	start	The original rectangle.
 		 *
-		 * @returns	{nxZoner#Rect}	The resulting rectangle of the modification.
+		 * @returns	{nxHotZone#Rect}	The resulting rectangle of the modification.
 		 */
 		resizeW:  function(x, y, dx, dy, start) { return this.handlers.resize.call(this, dx,  0, -dx,   0, start); },
 
@@ -415,9 +415,9 @@ nxZoner = function(config) {
 		 * @param	{int}			y	The starting y coordinate of the move, in pixels.
 		 * @param	{int}			dx	The amount of total movement on the x coordinate, in pixels.
 		 * @param	{int}			dy	The amount of total movement on the y coordinate, in pixels.
-		 * @param	{nxZoner#Rect}	start	The original rectangle.
+		 * @param	{nxHotZone#Rect}	start	The original rectangle.
 		 *
-		 * @returns	{nxZoner#Rect}	The resulting rectangle of the modification.
+		 * @returns	{nxHotZone#Rect}	The resulting rectangle of the modification.
 		 */
 		resizeSW: function(x, y, dx, dy, start) { return this.handlers.resize.call(this, dx,  0, -dx,  dy, start); },
 
@@ -428,9 +428,9 @@ nxZoner = function(config) {
 		 * @param	{int}			y	The starting y coordinate of the move, in pixels.
 		 * @param	{int}			dx	The amount of total movement on the x coordinate, in pixels.
 		 * @param	{int}			dy	The amount of total movement on the y coordinate, in pixels.
-		 * @param	{nxZoner#Rect}	start	The original rectangle.
+		 * @param	{nxHotZone#Rect}	start	The original rectangle.
 		 *
-		 * @returns	{nxZoner#Rect}	The resulting rectangle of the modification.
+		 * @returns	{nxHotZone#Rect}	The resulting rectangle of the modification.
 		 */
 		resizeS:  function(x, y, dx, dy, start) { return this.handlers.resize.call(this, 0 ,  0,   0,  dy, start); },
 
@@ -441,9 +441,9 @@ nxZoner = function(config) {
 		 * @param	{int}			y	The starting y coordinate of the move, in pixels.
 		 * @param	{int}			dx	The amount of total movement on the x coordinate, in pixels.
 		 * @param	{int}			dy	The amount of total movement on the y coordinate, in pixels.
-		 * @param	{nxZoner#Rect}	start	The original rectangle.
+		 * @param	{nxHotZone#Rect}	start	The original rectangle.
 		 *
-		 * @returns	{nxZoner#Rect}	The resulting rectangle of the modification.
+		 * @returns	{nxHotZone#Rect}	The resulting rectangle of the modification.
 		 */
 		resizeSE: function(x, y, dx, dy, start) { return this.handlers.resize.call(this, 0 ,  0,  dx,  dy, start); },
 
@@ -454,9 +454,9 @@ nxZoner = function(config) {
 		 * @param	{int}			y	The starting y coordinate of the move, in pixels.
 		 * @param	{int}			dx	The amount of total movement on the x coordinate, in pixels.
 		 * @param	{int}			dy	The amount of total movement on the y coordinate, in pixels.
-		 * @param	{nxZoner#Rect}	start	The original rectangle.
+		 * @param	{nxHotZone#Rect}	start	The original rectangle.
 		 *
-		 * @returns	{nxZoner#Rect}	The resulting rectangle of the modification.
+		 * @returns	{nxHotZone#Rect}	The resulting rectangle of the modification.
 		 */
 		resizeE:  function(x, y, dx, dy, start) { return this.handlers.resize.call(this, 0 ,  0,  dx,   0, start); },
 
@@ -467,9 +467,9 @@ nxZoner = function(config) {
 		 * @param	{int}			y	The starting y coordinate of the move, in pixels.
 		 * @param	{int}			dx	The amount of total movement on the x coordinate, in pixels.
 		 * @param	{int}			dy	The amount of total movement on the y coordinate, in pixels.
-		 * @param	{nxZoner#Rect}	start	The original rectangle.
+		 * @param	{nxHotZone#Rect}	start	The original rectangle.
 		 *
-		 * @returns	{nxZoner#Rect}	The resulting rectangle of the modification.
+		 * @returns	{nxHotZone#Rect}	The resulting rectangle of the modification.
 		 */
 		resizeNE: function(x, y, dx, dy, start) { return this.handlers.resize.call(this, 0 , dy,  dx, -dy, start); },
 
@@ -481,9 +481,9 @@ nxZoner = function(config) {
 		 * @param	{int}			dy	The amount to move the top edge, in pixels.
 		 * @param	{int}			dw	The amount to change the width of the selection, in pixels.
 		 * @param	{int}			dh	The amount to change the height of the selection, in pixels.
-		 * @param	{nxZoner#Rect}	start	The original rectangle.
+		 * @param	{nxHotZone#Rect}	start	The original rectangle.
 		 *
-		 * @returns	{nxZoner#Rect}	The resulting rectangle of the modification.
+		 * @returns	{nxHotZone#Rect}	The resulting rectangle of the modification.
 		 */
 		resize: function(dx, dy, dw, dh, start) {
 			return new this.Rect(
@@ -498,7 +498,7 @@ nxZoner = function(config) {
 	/**
 	 * Set and draw the selected zone.
 	 *
-	 * @param	{object}	An instance of the rectangle created by nxZoner.rect.
+	 * @param	{object}	An instance of the rectangle created by nxHotZone.rect.
 	 */
 	this.setSelection = function(selection) {
 
@@ -834,10 +834,10 @@ nxZoner = function(config) {
 
 // Auto-load as jQuery plugin
 if(typeof jQuery === 'function') {
-	$.fn.nxZoner = function(params) {
+	$.fn.nxHotZone = function(params) {
 		for(var i = 0; i < this.length; i++) {
-			var zoner = new nxZoner(params).useOnImage(this[i]);
-			$(this).data('nxZoner', zoner);
+			var hotzone = new nxHotZone(params).useOnImage(this[i]);
+			$(this).data('nxHotZone', hotzone);
 		}
 	};
 }

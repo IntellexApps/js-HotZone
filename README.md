@@ -1,4 +1,4 @@
-# nxZoner
+# nxHotZone
 
 Versatile plain-js for selecting area of an image.
 Can be used to retreive selection coordinates, or content.
@@ -14,20 +14,20 @@ Can be used to retreive selection coordinates, or content.
 ## Usage
 ### Plain javascript:
 ```js
-var zoner = new nxZoner(params).useOnImage(document.getElementById('Example'));
-zoner.getSelection(); // Get coordinates
-zoner.getImage(); // Get content
+var hotzone = new nxHotZone(params).useOnImage(document.getElementById('Example'));
+hotzone.getSelection(); // Get coordinates
+hotzone.getImage(); // Get content
 
-zoner.setSelection(new zoner.Rect(50, 50, 100, 100)); // Set selection (args: left, right, width, height)
+hotzone.setSelection(new nxHotZone.Rect(50, 50, 100, 100)); // Set selection (args: left, right, width, height)
 ```
 
 ### jQuery
 ```js
-$('#Example').nxZoner(params);
-$('#Example').data('nxZoner').getSelection(); // Get coordinates
-$('#Example').data('nxZoner').getImage(); // Get coordinates
+$('#Example').nxHotZone(params);
+$('#Example').data('nxHotZone').getSelection(); // Get coordinates
+$('#Example').data('nxHotZone').getImage(); // Get coordinates
 
-$('#Crop').setSelection(new zoner.Rect(50, 50, 100, 100)); // Set selection (args: left, right, width, height)
+$('#Crop').setSelection(new nxHotZone.Rect(50, 50, 100, 100)); // Set selection (args: left, right, width, height)
 ```
 
 ## Configuration options
@@ -44,7 +44,7 @@ $('#Crop').setSelection(new zoner.Rect(50, 50, 100, 100)); // Set selection (arg
 * __encoderOptions__ _// A number between 0 and 1 indicating image quality for image/jpeg or image/webIf. Default is 0.92._
 
 ## TODO
-1. Optimization
+1. Optimize!
 2. Blur effect.
 2. Tests.
 3. Events.
