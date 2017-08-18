@@ -155,7 +155,7 @@ nxHotZone = function(config) {
 		this.original = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
 
 		// Initial handler is select
-		this.handler = this.handlers.select
+		this.handler = this.handlers.select;
 
 		// Set the mouse events
 		this.canvas.onmousedown		= this.mouse.down;
@@ -496,59 +496,73 @@ nxHotZone = function(config) {
 	};
 
 	/**
+	 * Clear the current selection.
+	 */
+	this.clear = function() {
+		this.setSelection(null);
+	},
+
+	/**
 	 * Set and draw the selected zone.
 	 *
 	 * @param	{object}	An instance of the rectangle created by nxHotZone.rect.
 	 */
 	this.setSelection = function(selection) {
-
-		// Set the selection
-		this.selection = selection.restrictToBoundary(0, 0, this.canvas.width, this.canvas.height);
-
-		// Precalcualte
-		var border = {
-			out: {
-				l: this.selection.left   - this.config.lineWidth,
-				r: this.selection.right  + this.config.lineWidth,
-				t: this.selection.top    - this.config.lineWidth,
-				b: this.selection.bottom + this.config.lineWidth },
-			in: {
-				l: this.selection.left,
-				r: this.selection.right,
-				t: this.selection.top,
-				b: this.selection.bottom }
-		};
-
-		// Process
 		this.image.data = this.loadOriginalData();
-		for(var i = 0, len = this.image.data.length; i < len; i += 4) {
+		this.selection = selection;
 
-			// Get coordinates
-			var x = i / 4 % this.canvas.width;
-			var y = Math.floor(i / 4 / this.canvas.width);
+		// If something is selected
+		if(this.selection) {
 
-			// Outside the selection
-			if(
-				x < border.out.l ||
-				x > border.out.r ||
-				y < border.out.t ||
-				y > border.out.b ) {
+			// Set the selection
+			this.selection = this.selection.restrictToBoundary(0, 0, this.canvas.width, this.canvas.height);
 
-				this.pixel(x, y, i, this.config.overlayColor, true);
+			// Precalcualte
+			var border = {
+				out: {
+					l: this.selection.left   - this.config.lineWidth,
+					r: this.selection.right  + this.config.lineWidth,
+					t: this.selection.top    - this.config.lineWidth,
+					b: this.selection.bottom + this.config.lineWidth },
+				in: {
+					l: this.selection.left,
+					r: this.selection.right,
+					t: this.selection.top,
+					b: this.selection.bottom }
+			};
 
-			// Inside the selection
-			} else if(
-				x >= border.in.l &&
-				x <= border.in.r &&
-				y >= border.in.t &&
-				y <= border.in.b ) {
+			// Process
+			for(var i = 0, len = this.image.data.length; i < len; i += 4) {
 
-				this.pixel(x, y, i, this.config.selectedColor);
+				// Get coordinates
+				var x = i / 4 % this.canvas.width;
+				var y = Math.floor(i / 4 / this.canvas.width);
 
-			// Line
-			} else {
-				this.pixel(x, y, i, this.config.lineColor);
+				// Outside the selection
+				if(
+					x < border.out.l ||
+					x > border.out.r ||
+					y < border.out.t ||
+					y > border.out.b ) {
+
+					this.pixel(x, y, i, this.config.overlayColor, true);
+
+				// Inside the selection
+				} else if(
+					x >= border.in.l &&
+					x <= border.in.r &&
+					y >= border.in.t &&
+					y <= border.in.b ) {
+
+					this.pixel(x, y, i, this.config.selectedColor);
+
+				// Line
+				} else {
+					this.pixel(x, y, i, this.config.lineColor);
+				}
 			}
+		} else {
+			this.handler = this.handlers.select;
 		}
 
 		this.context.putImageData(this.image, 0, 0);
@@ -570,22 +584,22 @@ nxHotZone = function(config) {
 			this.image.data[index + i] = Math.min(255, Math.round(this.image.data[index + i] * (1 - pixel[3]) + pixel[i] * pixel[3]));
 		}
 
-		//~ // Blur INCOMPLETE
-		//~ if(blur && this.config.blur) {
-			//~ var half = this.config.blur / 2;
-			//~ for(var n = x - half; n < x + half; n++) {
-				//~ for(var m = y - half; m < y + half; m++) {
+		// Blur INCOMPLETE
+		if(blur && this.config.blur) {
+			var half = this.config.blur / 2;
+			for(var n = x - half; n < x + half; n++) {
+				for(var m = y - half; m < y + half; m++) {
 
-					//~ // Get index of the pixel to blend with
-					//~ var b = 4 * (n + m * this.canvas.width);
+					// Get index of the pixel to blend with
+					var b = 4 * (n + m * this.canvas.width);
 
-					//~ // Set all trhee channels (RGB)
-					//~ for(var c = 0; c < 3; c++) {
-						//~ this.image.data[index + c] = Math.min(255, Math.round((this.image.data[index + c] + this.image.data[b + c]) / 2));
-					//~ }
-				//~ }
-			//~ }
-		//~ }
+					// Set all trhee channels (RGB)
+					for(var c = 0; c < 3; c++) {
+						this.image.data[index + c] = Math.min(255, Math.round((this.image.data[index + c] + this.image.data[b + c]) / 2));
+					}
+				}
+			}
+		}
 	};
 
 	/**

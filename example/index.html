@@ -12,7 +12,47 @@
 		<script src="../nxHotZone-v0.1.0.js"></script>
 		<script type="text/javascript">
 			var hotzone = new nxHotZone().useOnImage(document.getElementById('Example'));
+
+			window.Example = {
+
+				reset: function() {
+					hotzone.setSelection(null);
+				},
+
+				getSelection: function() {
+					var rect = hotzone.getSelection();
+					if(rect) {
+						alert('Selected area:\n\n' + '    left: ' + rect.left + '\n' + '    top: ' + rect.top + '\n' + '    right: ' + rect.right + '\n' + '    bottom: ' + rect.bottom + '\n\n' + '    width: ' + rect.width + '\n' + '    height: ' + rect.height + '\n');
+					} else {
+						this.empty();
+					}
+				},
+
+				extractImage: function() {
+					var image = hotzone.getImage();
+					if(image) {
+						var img = document.createElement('img');
+						img.src = image;
+						document.getElementById('Crops').appendChild(img);
+					} else {
+						this.empty();
+					}
+				},
+
+				empty: function() {
+					alert('Nothing is selected.');
+				}
+			}
 		</script>
 
+		<button onclick="window.Example.getSelection()">Get selected coordinates: hotzone.getSelection()</button>
+		<br /><br />
+		<button onclick="window.Example.extractImage()">Crop: hotzone.getImage()</button>
+		<br /><br />
+		<button onclick="window.Example.reset()">Clear selection: hotzone.reset()</button>
+		<br /><br />
+
+		<div id="Crops"></div>
+
 	</body>
-</html
+</html>
