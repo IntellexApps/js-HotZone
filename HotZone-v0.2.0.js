@@ -5,7 +5,7 @@
  *
  * @author	Ivan Sabo
  */
-nxHotZone = function(config) {
+HotZone = function(config) {
 	var This = this;
 
 	/** A reference to the HTML canvas element which renders the selection. */
@@ -45,10 +45,13 @@ nxHotZone = function(config) {
 		lineColor: '#CFFF',
 
 		/** The overlay color of the unselected area, supports alpha channel. */
-		overlayColor: '#D334',
+		overlayColor: '#9334',
 
 		/** The overlay color of the selected area, supports alpha channel. */
 		selectedColor: null,
+
+		/** Set to true to convert unselected area to grayscale. */
+		grayscale: true,
 
 		/** INCOMPLETE */
 		blur: 0 // INCOMPLETE
@@ -60,26 +63,29 @@ nxHotZone = function(config) {
 	/** Cache used for parsing user supplied colors from configuration to pixels. */
 	this.colorCache = {};
 
+	/** Cache used to see if a pixel should be repainted or not. */
+	this.pixelCache = {};
+
 	/**
 	 * Apply the canvas on an image DOM element and initialize everything.
 	 *
 	 * @param	{DOMElement}	image - The image to use.
 	 *
-	 * @return	{nxHotZone}	The instance of initialized class.
+	 * @return	{HotZone}	The instance of initialized class.
 	 */
 	this.useOnImage = function(img) {
 
 		// Create wrapper
 		var wrapper = document.createElement('div');
 		wrapper.style.position = 'relative';
-		wrapper.className = 'nxHotZone'
+		wrapper.className = 'HotZone'
 
 		// Put image in wrapper
+		bounds = img.getBoundingClientRect();
 		img.style.visibility = 'hidden';
-		img.dataset.nxHotZone = this;
+		img.dataset.HotZone = this;
 		img.parentNode.insertBefore(wrapper, img.nextSibling);
 		wrapper.appendChild(img);
-		bounds = wrapper.getBoundingClientRect();
 
 		// Set the canvas up
 		canvas = document.createElement('canvas');
@@ -137,7 +143,7 @@ nxHotZone = function(config) {
 		this.canvas = canvas;
 		this.bounds = this.canvas.getBoundingClientRect();
 		this.context = this.canvas.getContext("2d");
-		this.canvas.dataset.nxHotZone = this;
+		this.canvas.dataset.HotZone = this;
 
 		return this.canvas;
 	};
@@ -167,7 +173,7 @@ nxHotZone = function(config) {
 	/**
 	 * Get the currently selected rectangle, or null if nothing is selected.
 	 *
-	 * @returns	{nxHotZone#Rect}	The selected rectangle;
+	 * @returns	{HotZone#Rect}	The selected rectangle;
 	 */
 	this.getSelection = function() {
 		return this.selection;
@@ -346,9 +352,9 @@ nxHotZone = function(config) {
 		 * @param	{int}			y	The starting y coordinate of the move, in pixels.
 		 * @param	{int}			dx	The amount of total movement on the x coordinate, in pixels.
 		 * @param	{int}			dy	The amount of total movement on the y coordinate, in pixels.
-		 * @param	{nxHotZone#Rect}	start	The original rectangle.
+		 * @param	{HotZone#Rect}	start	The original rectangle.
 		 *
-		 * @returns	{nxHotZone#Rect}	The resulting rectangle of the modification.
+		 * @returns	{HotZone#Rect}	The resulting rectangle of the modification.
 		 */
 		move: function(x, y, dx, dy, start) {
 			return new this.Rect(start.left + dx, start.top + dy, start.width, start.height);
@@ -361,9 +367,9 @@ nxHotZone = function(config) {
 		 * @param	{int}			y	The starting y coordinate of the move, in pixels.
 		 * @param	{int}			dx	The amount of total movement on the x coordinate, in pixels.
 		 * @param	{int}			dy	The amount of total movement on the y coordinate, in pixels.
-		 * @param	{nxHotZone#Rect}	start	The original rectangle.
+		 * @param	{HotZone#Rect}	start	The original rectangle.
 		 *
-		 * @returns	{nxHotZone#Rect}	The resulting rectangle of the modification.
+		 * @returns	{HotZone#Rect}	The resulting rectangle of the modification.
 		 */
 		select: function(x, y, dx, dy, start) {
 			return new this.Rect(x, y, dx, dy);
@@ -376,9 +382,9 @@ nxHotZone = function(config) {
 		 * @param	{int}			y	The starting y coordinate of the move, in pixels.
 		 * @param	{int}			dx	The amount of total movement on the x coordinate, in pixels.
 		 * @param	{int}			dy	The amount of total movement on the y coordinate, in pixels.
-		 * @param	{nxHotZone#Rect}	start	The original rectangle.
+		 * @param	{HotZone#Rect}	start	The original rectangle.
 		 *
-		 * @returns	{nxHotZone#Rect}	The resulting rectangle of the modification.
+		 * @returns	{HotZone#Rect}	The resulting rectangle of the modification.
 		 */
 		resizeN:  function(x, y, dx, dy, start) { return this.handlers.resize.call(this, 0 , dy,   0, -dy, start); },
 
@@ -389,9 +395,9 @@ nxHotZone = function(config) {
 		 * @param	{int}			y	The starting y coordinate of the move, in pixels.
 		 * @param	{int}			dx	The amount of total movement on the x coordinate, in pixels.
 		 * @param	{int}			dy	The amount of total movement on the y coordinate, in pixels.
-		 * @param	{nxHotZone#Rect}	start	The original rectangle.
+		 * @param	{HotZone#Rect}	start	The original rectangle.
 		 *
-		 * @returns	{nxHotZone#Rect}	The resulting rectangle of the modification.
+		 * @returns	{HotZone#Rect}	The resulting rectangle of the modification.
 		 */
 		resizeNW: function(x, y, dx, dy, start) { return this.handlers.resize.call(this, dx, dy, -dx, -dy, start); },
 
@@ -402,9 +408,9 @@ nxHotZone = function(config) {
 		 * @param	{int}			y	The starting y coordinate of the move, in pixels.
 		 * @param	{int}			dx	The amount of total movement on the x coordinate, in pixels.
 		 * @param	{int}			dy	The amount of total movement on the y coordinate, in pixels.
-		 * @param	{nxHotZone#Rect}	start	The original rectangle.
+		 * @param	{HotZone#Rect}	start	The original rectangle.
 		 *
-		 * @returns	{nxHotZone#Rect}	The resulting rectangle of the modification.
+		 * @returns	{HotZone#Rect}	The resulting rectangle of the modification.
 		 */
 		resizeW:  function(x, y, dx, dy, start) { return this.handlers.resize.call(this, dx,  0, -dx,   0, start); },
 
@@ -415,9 +421,9 @@ nxHotZone = function(config) {
 		 * @param	{int}			y	The starting y coordinate of the move, in pixels.
 		 * @param	{int}			dx	The amount of total movement on the x coordinate, in pixels.
 		 * @param	{int}			dy	The amount of total movement on the y coordinate, in pixels.
-		 * @param	{nxHotZone#Rect}	start	The original rectangle.
+		 * @param	{HotZone#Rect}	start	The original rectangle.
 		 *
-		 * @returns	{nxHotZone#Rect}	The resulting rectangle of the modification.
+		 * @returns	{HotZone#Rect}	The resulting rectangle of the modification.
 		 */
 		resizeSW: function(x, y, dx, dy, start) { return this.handlers.resize.call(this, dx,  0, -dx,  dy, start); },
 
@@ -428,9 +434,9 @@ nxHotZone = function(config) {
 		 * @param	{int}			y	The starting y coordinate of the move, in pixels.
 		 * @param	{int}			dx	The amount of total movement on the x coordinate, in pixels.
 		 * @param	{int}			dy	The amount of total movement on the y coordinate, in pixels.
-		 * @param	{nxHotZone#Rect}	start	The original rectangle.
+		 * @param	{HotZone#Rect}	start	The original rectangle.
 		 *
-		 * @returns	{nxHotZone#Rect}	The resulting rectangle of the modification.
+		 * @returns	{HotZone#Rect}	The resulting rectangle of the modification.
 		 */
 		resizeS:  function(x, y, dx, dy, start) { return this.handlers.resize.call(this, 0 ,  0,   0,  dy, start); },
 
@@ -441,9 +447,9 @@ nxHotZone = function(config) {
 		 * @param	{int}			y	The starting y coordinate of the move, in pixels.
 		 * @param	{int}			dx	The amount of total movement on the x coordinate, in pixels.
 		 * @param	{int}			dy	The amount of total movement on the y coordinate, in pixels.
-		 * @param	{nxHotZone#Rect}	start	The original rectangle.
+		 * @param	{HotZone#Rect}	start	The original rectangle.
 		 *
-		 * @returns	{nxHotZone#Rect}	The resulting rectangle of the modification.
+		 * @returns	{HotZone#Rect}	The resulting rectangle of the modification.
 		 */
 		resizeSE: function(x, y, dx, dy, start) { return this.handlers.resize.call(this, 0 ,  0,  dx,  dy, start); },
 
@@ -454,9 +460,9 @@ nxHotZone = function(config) {
 		 * @param	{int}			y	The starting y coordinate of the move, in pixels.
 		 * @param	{int}			dx	The amount of total movement on the x coordinate, in pixels.
 		 * @param	{int}			dy	The amount of total movement on the y coordinate, in pixels.
-		 * @param	{nxHotZone#Rect}	start	The original rectangle.
+		 * @param	{HotZone#Rect}	start	The original rectangle.
 		 *
-		 * @returns	{nxHotZone#Rect}	The resulting rectangle of the modification.
+		 * @returns	{HotZone#Rect}	The resulting rectangle of the modification.
 		 */
 		resizeE:  function(x, y, dx, dy, start) { return this.handlers.resize.call(this, 0 ,  0,  dx,   0, start); },
 
@@ -467,9 +473,9 @@ nxHotZone = function(config) {
 		 * @param	{int}			y	The starting y coordinate of the move, in pixels.
 		 * @param	{int}			dx	The amount of total movement on the x coordinate, in pixels.
 		 * @param	{int}			dy	The amount of total movement on the y coordinate, in pixels.
-		 * @param	{nxHotZone#Rect}	start	The original rectangle.
+		 * @param	{HotZone#Rect}	start	The original rectangle.
 		 *
-		 * @returns	{nxHotZone#Rect}	The resulting rectangle of the modification.
+		 * @returns	{HotZone#Rect}	The resulting rectangle of the modification.
 		 */
 		resizeNE: function(x, y, dx, dy, start) { return this.handlers.resize.call(this, 0 , dy,  dx, -dy, start); },
 
@@ -481,9 +487,9 @@ nxHotZone = function(config) {
 		 * @param	{int}			dy	The amount to move the top edge, in pixels.
 		 * @param	{int}			dw	The amount to change the width of the selection, in pixels.
 		 * @param	{int}			dh	The amount to change the height of the selection, in pixels.
-		 * @param	{nxHotZone#Rect}	start	The original rectangle.
+		 * @param	{HotZone#Rect}	start	The original rectangle.
 		 *
-		 * @returns	{nxHotZone#Rect}	The resulting rectangle of the modification.
+		 * @returns	{HotZone#Rect}	The resulting rectangle of the modification.
 		 */
 		resize: function(dx, dy, dw, dh, start) {
 			return new this.Rect(
@@ -505,10 +511,9 @@ nxHotZone = function(config) {
 	/**
 	 * Set and draw the selected zone.
 	 *
-	 * @param	{object}	An instance of the rectangle created by nxHotZone.rect.
+	 * @param	{object}	An instance of the rectangle created by HotZone.rect.
 	 */
 	this.setSelection = function(selection) {
-		this.image.data = this.loadOriginalData();
 		this.selection = selection;
 
 		// If something is selected
@@ -519,19 +524,19 @@ nxHotZone = function(config) {
 
 			// Precalcualte
 			var border = {
-				out: {
+				outer: {
 					l: this.selection.left   - this.config.lineWidth,
 					r: this.selection.right  + this.config.lineWidth,
 					t: this.selection.top    - this.config.lineWidth,
 					b: this.selection.bottom + this.config.lineWidth },
-				in: {
+				inner: {
 					l: this.selection.left,
 					r: this.selection.right,
 					t: this.selection.top,
 					b: this.selection.bottom }
 			};
 
-			// Process
+			// Process each pixel
 			for(var i = 0, len = this.image.data.length; i < len; i += 4) {
 
 				// Get coordinates
@@ -540,32 +545,64 @@ nxHotZone = function(config) {
 
 				// Outside the selection
 				if(
-					x < border.out.l ||
-					x > border.out.r ||
-					y < border.out.t ||
-					y > border.out.b ) {
+					x < border.outer.l ||
+					x > border.outer.r ||
+					y < border.outer.t ||
+					y > border.outer.b ) {
 
-					this.pixel(x, y, i, this.config.overlayColor, true);
+					if(!this.pixelCache.hasOwnProperty(i) || this.pixelCache[i] != 'out') {
+						this.pixel(x, y, i, this.config.overlayColor, true);
+						this.pixelCache[i] = 'out';
+					}
 
 				// Inside the selection
 				} else if(
-					x >= border.in.l &&
-					x <= border.in.r &&
-					y >= border.in.t &&
-					y <= border.in.b ) {
+					x >= border.inner.l &&
+					x <= border.inner.r &&
+					y >= border.inner.t &&
+					y <= border.inner.b ) {
 
-					this.pixel(x, y, i, this.config.selectedColor);
+					if(!this.pixelCache.hasOwnProperty(i) || this.pixelCache[i] != 'in') {
+						this.pixel(x, y, i, this.config.selectedColor);
+						this.pixelCache[i] = 'in';
+					}
 
 				// Line
 				} else {
-					this.pixel(x, y, i, this.config.lineColor);
+					if(!this.pixelCache.hasOwnProperty(i) || this.pixelCache[i] != 'on') {
+						this.pixel(x, y, i, this.config.lineColor);
+						this.pixelCache[i] = 'on';
+					}
 				}
 			}
+
+		// Restore
 		} else {
+
+			// Reset pixels
+			var len = this.original.data.length;
+			for(var i = 0; i < len; i++) {
+				this.image.data[i] = this.original.data[i];
+			}
+
 			this.handler = this.handlers.select;
+			this.pixelCache = {};
 		}
 
 		this.context.putImageData(this.image, 0, 0);
+	};
+
+	this.test = function() {
+		var tests = 30;
+		var time = new Date().getTime();
+
+		this.clear();
+		for(var i = 0; i < tests; i++) {
+			this.setSelection(new this.Rect(50, 50, 100, 100));
+			this.setSelection(new this.Rect(60, 60, 200, 200));
+		}
+
+		console.info((new Date().getTime() - time) / tests);
 	};
 
 	/**
@@ -576,16 +613,23 @@ nxHotZone = function(config) {
 	 * @param	{mixed}	color - The color to add to the original pixel.
 	 * @param	{mixed}	blur - The blue radius to use, or 0 to disable (INCOMPLETE).
 	 */
-	this.pixel = function(x, y, index, color, blur) {
+	this.pixel = function(x, y, index, color, outer) {
 		var pixel = this.getColor(color);
 
-		// Set all trhee channels (RGB), with respecto to alpha
+		// Set all three channels (RGB), with respect to alpha
+		this.image.data[index + 3] = 255;
 		for(var i = 0; i < 3; i++) {
-			this.image.data[index + i] = Math.min(255, Math.round(this.image.data[index + i] * (1 - pixel[3]) + pixel[i] * pixel[3]));
+			this.image.data[index + i] = Math.min(255, Math.round(this.original.data[index + i] * (1 - pixel[3]) + pixel[i] * pixel[3]));
+		}
+
+		// If grayscale
+		if(outer && this.config.grayscale) {
+			var avg = this.image.data[index + 0] * 0.21 + this.image.data[index + 1] * 0.72 + this.image.data[index + 2] * 0.07;
+			this.image.data[index + 0] = this.image.data[index + 1] = this.image.data[index + 2] = avg;
 		}
 
 		// Blur INCOMPLETE
-		if(blur && this.config.blur) {
+		if(outer && this.config.blur) {
 			var half = this.config.blur / 2;
 			for(var n = x - half; n < x + half; n++) {
 				for(var m = y - half; m < y + half; m++) {
@@ -607,11 +651,11 @@ nxHotZone = function(config) {
 	 *
 	 * @return	{Uint8ClampedArray}	The image data of the original image.
 	 */
-	this.loadOriginalData = function() {
-		this.image.data = new Uint8ClampedArray(this.original.data.length);
-		this.image.data.set(this.original.data);
+	this.loadOriginalData = function(data) {
+		var data = new Uint8ClampedArray(this.original.data.length);
+		data.set(this.original.data);
 
-		return this.image.data;
+		return data;
 	};
 
 	/**
@@ -748,7 +792,7 @@ nxHotZone = function(config) {
 		 *
 		 * @param	{string}	color - A string representation of a color.
 		 *
-		 * @return	{nxZone#Color}	The parsed color, or undefined if unable to parse.
+		 * @return	{HotZone#Color}	The parsed color, or undefined if unable to parse.
 		 */
 		this.parseStandard16M = function(color) {
 			if(match = color.match(/^\s*#?([0-9A-F][0-9A-F])?([0-9A-F][0-9A-F])([0-9A-F][0-9A-F])([0-9A-F][0-9A-F])\s*$/i)) {
@@ -766,7 +810,7 @@ nxHotZone = function(config) {
 		 *
 		 * @param	{string}	A string representation of a color.
 		 *
-		 * @return	{nxZone#Color}	The parsed color, or undefined if unable to parse.
+		 * @return	{HotZone#Color}	The parsed color, or undefined if unable to parse.
 		 */
 		this.parseStandard512 = function(color) {
 			if(match = color.match(/^\s*#?([0-9A-F])?([0-9A-F])([0-9A-F])([0-9A-F])\s*$/i)) {
@@ -784,7 +828,7 @@ nxHotZone = function(config) {
 		 *
 		 * @param	{string}	A string representation of a color.
 		 *
-		 * @return	{nxZone#Color}	The parsed color, or null if unable to parse.
+		 * @return	{HotZone#Color}	The parsed color, or null if unable to parse.
 		 */
 		this.parseCSSrgba = function(color) {
 			if(match = color.match(/^\s*rgba?\s*\(\s*([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\s*(,\s*([0-9]+(\.[0-9])?)\s*)?\)\s*$/)) {
@@ -805,7 +849,7 @@ nxHotZone = function(config) {
 		 * @param	{int}	b - Blue component of the color.
 		 * @param	{float}	a - Alpha component of the color.
 		 *
-		 * @return	{nxZone#Color}	The standardized color.
+		 * @return	{HotZone#Color}	The standardized color.
 		 */
 		this.load = function(r, g, b, a) {
 
@@ -848,10 +892,10 @@ nxHotZone = function(config) {
 
 // Auto-load as jQuery plugin
 if(typeof jQuery === 'function') {
-	jQuery.fn.nxHotZone = function(params) {
+	jQuery.fn.HotZone = function(params) {
 		for(var i = 0; i < this.length; i++) {
-			var hotzone = new nxHotZone(params).useOnImage(this[i]);
-			jQuery(this).data('nxHotZone', hotzone);
+			var hotzone = new HotZone(params).useOnImage(this[i]);
+			jQuery(this).data('HotZone', hotzone);
 		}
 	};
 }

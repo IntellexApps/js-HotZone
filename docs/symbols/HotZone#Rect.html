@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - _global_</title>
+		<title>JsDoc Reference - HotZone#Rect</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -206,7 +206,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Built-In Namespace _global_
+				Class HotZone#Rect
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -217,9 +217,32 @@ ul.inheritsList
 				
 				
 				
+					<br /><i>Defined in: </i> <a href="../symbols/src/HotZone-v0.2.0.js.html">HotZone-v0.2.0.js</a>.
+				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
+			
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class HotZone#Rect.">
+				<caption>Class Summary</caption>
+				<thead>
+					<tr>
+						<th scope="col">Constructor Attributes</th>
+						<th scope="col">Constructor Name and Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td class="attributes">&nbsp;</td>
+						<td class="nameDescription" >
+							<div class="fixedFont">
+								<b><a href="../symbols/HotZone%23Rect.html#constructor">HotZone#Rect</a></b>(l, t, w, h)
+							</div>
+							<div class="description">Basic rectangle which handle negative widths and heights to create properly oriented rectangle.</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
 			
 
 <!-- ============================== properties summary ===================== -->
@@ -227,16 +250,172 @@ ul.inheritsList
 
 <!-- ============================== methods summary ======================== -->
 			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class HotZone#Rect.">
+					<caption>Method Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Method Attributes</th>
+							<th scope="col">Method Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/HotZone%23Rect.html#restrictToBoundary">restrictToBoundary</a></b>(l, t, r, b)
+								</div>
+								<div class="description">Restrict this rectangle to a predefined boundary.</div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
+			
 <!-- ============================== events summary ======================== -->
 			
 
 <!-- ============================== constructor details ==================== -->		
+			
+			<div class="details"><a name="constructor"> </a>
+				<div class="sectionTitle">
+					Class Detail
+				</div>
+				
+				<div class="fixedFont">
+						<b>HotZone#Rect</b>(l, t, w, h)
+				</div>
+				
+				<div class="description">
+					Basic rectangle which handle negative widths and heights to create properly oriented rectangle.
+					
+				</div>
+				
+				
+				
+				
+					
+						<dl class="detailList">
+						<dt class="heading">Parameters:</dt>
+						
+							<dt>
+								<span class="light fixedFont">{int}</span>  <b>l</b>
+								
+							</dt>
+								<dd>- The x coordinate of the left edge, in pixels.</dd>
+						
+							<dt>
+								<span class="light fixedFont">{int}</span>  <b>t</b>
+								
+							</dt>
+								<dd>- The y coordinate of the top edge, in pixels.</dd>
+						
+							<dt>
+								<span class="light fixedFont">{int}</span>  <b>w</b>
+								
+							</dt>
+								<dd>- The desired width of the rectange, in pixels.</dd>
+						
+							<dt>
+								<span class="light fixedFont">{int}</span>  <b>h</b>
+								
+							</dt>
+								<dd>- The desired heigth of the rectange, in pixels.</dd>
+						
+						</dl>
+					
+					
+					
+					
+					
+						<dl class="detailList">
+						<dt class="heading">Returns:</dt>
+						
+								<dd><span class="light fixedFont">{object}</span> The resulting rectangle.</dd>
+						
+						</dl>
+					
+					
+					
+
+			</div>
 			
 
 <!-- ============================== field details ========================== -->		
 			
 
 <!-- ============================== method details ========================= -->		
+			
+				<div class="sectionTitle">
+					Method Detail
+				</div>
+				
+					<a name="restrictToBoundary"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{object}</span>
+					<b>restrictToBoundary</b>(l, t, r, b)
+					
+					</div>
+					<div class="description">
+						Restrict this rectangle to a predefined boundary.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{int}</span> <b>l</b>
+									
+								</dt>
+								<dd>- The minimal x coordinate of the left edge, in pixels.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{int}</span> <b>t</b>
+									
+								</dt>
+								<dd>- The minimal y coordinate of the top edge, in pixels.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{int}</span> <b>r</b>
+									
+								</dt>
+								<dd>- The maximal x coordinate of the right edge, in pixels.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{int}</span> <b>b</b>
+									
+								</dt>
+								<dd>- The maximal y coordinate of the bottom edge, in pixels.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{object}</span> The restricted rectangle.</dd>
+							
+							</dl>
+						
+						
+						
+
+					
+				
 			
 			
 <!-- ============================== event details ========================= -->		

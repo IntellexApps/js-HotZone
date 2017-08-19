@@ -1,4 +1,4 @@
-# nxHotZone
+# HotZone
 
 Versatile plain-js for selecting area of an image.
 Can be used to retreive selection coordinates, or content.
@@ -14,20 +14,20 @@ Can be used to retreive selection coordinates, or content.
 ## Usage
 ### Plain javascript:
 ```js
-var hotzone = new nxHotZone(params).useOnImage(document.getElementById('Example'));
+var hotzone = new HotZone(params).useOnImage(document.getElementById('Example'));
 hotzone.getSelection(); // Get coordinates
 hotzone.getImage(); // Get content
 
-hotzone.setSelection(new nxHotZone.Rect(50, 50, 100, 100)); // Set selection (args: left, right, width, height)
+hotzone.setSelection(new HotZone.Rect(50, 50, 100, 100)); // Set selection (args: left, right, width, height)
 ```
 
 ### jQuery
 ```js
-$('#Example').nxHotZone(params);
-$('#Example').data('nxHotZone').getSelection(); // Get coordinates
-$('#Example').data('nxHotZone').getImage(); // Get coordinates
+$('#Example').HotZone(params);
+$('#Example').data('HotZone').getSelection(); // Get coordinates
+$('#Example').data('HotZone').getImage(); // Get coordinates
 
-$('#Crop').setSelection(new nxHotZone.Rect(50, 50, 100, 100)); // Set selection (args: left, right, width, height)
+$('#Crop').setSelection(new HotZone.Rect(50, 50, 100, 100)); // Set selection (args: left, right, width, height)
 ```
 
 ## Configuration options
@@ -46,8 +46,9 @@ $('#Crop').setSelection(new nxHotZone.Rect(50, 50, 100, 100)); // Set selection 
 ## TODO
 1. Optimize!
 2. Blur effect.
-2. Tests.
-3. Events.
+3. Tests.
+4. Events.
+5. Better documentation.
 
 
 ## Credits
