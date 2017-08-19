@@ -11,6 +11,9 @@ Can be used to retreive selection coordinates, or content.
 * Supports various visual changes via simple __configuration parameters__.
 * Pure canvas solution, just one wrapper <div> and a __single <canvas>__ element.
 
+## Live demo
+http://rawgit.com/intellexApps/js-HotZone/master/example/index.html
+
 ## Usage
 ### Plain javascript:
 ```js
